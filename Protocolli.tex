@@ -1,0 +1,968 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage{graphicx}
+\usepackage{float} %per posizione assoluta delle immagini [H]
+\usepackage[colorlinks=true,linkcolor=blue]{hyperref}
+\usepackage{nameref} 
+\usepackage{siunitx} 
+\usepackage[a4paper,top=4cm,bottom=3cm,left=2.5cm,right=2.5cm]{geometry}
+
+\setcounter{section}{-1} %per numerare le sezioni partendo da 0
+
+\graphicspath{{./images/}}
+
+%defines-----------------------------------
+\def\code#1{\texttt{#1}}
+\def\sec#1{\section{#1}\label{#1}} 
+\def\sub#1{\subsection{#1}\label{#1}} 
+\def\subsub#1{\subsubsection{#1}\label{#1}} 
+\def\para#1{\paragraph{#1}\label{#1}}
+\def\vedi#1{\nameref{#1}} 
+\def\italic#1{\textit{#1}}
+\def\image[#1][#2]#3{
+  \begin{figure}[H]
+  \centering
+  \includegraphics[#2]{#1}
+  \caption{#3}
+  \end{figure}}
+\def\boximage[#1][#2]#3{
+  \begin{figure}[H]
+  \centering
+  \fbox{\includegraphics[#2]{#1}}
+  \caption{#3}
+  \end{figure}}
+%------------------------------------------
+
+\begin{document}
+
+\tableofcontents
+\newpage
+
+\section{Introduzione}
+\para{Comunicazione}: scambio di informazioni fra due o più dispositivi grazie all'uso di mezzi trasmissivi. 
+\para{Protocollo}: insieme di regole che consentono la comunicazione.
+\para{Flussi Trasmissivi}: tra mittente e destinatario può essere di tre tipi:
+\begin{itemize}
+\item\textbf{Simplex}: solo uno dei due dispositivi spedisce informazioni mentre l'altro le riceve
+\item\textbf{Duplex}: ogni dispositivo può sia trasmettere che ricevere, ma non contemporaneamente
+\item\textbf{Full Duplex}: ogni dispositivo può sia trasmettere che ricevere contemporaneamente tramite due collegamenti fisici
+\end{itemize}
+\para{DTE} Data Terminal Equipment, dispositivo che permette la comunicazione dati (es. computer)
+\para{DCE} Data Communication Equipment, dispositivo che consente di convertire i segnali nella forma migliore per l'invio sul canale di comunicazione tra due DTE
+\para{Reti} insieme di dispositivi connessi da canali di comunicazione. Due modelli di elaborazione:
+\begin{itemize}
+\item\textit{Reti ad elaborazione\textbf{ concentrata}}: un potente DTE è messo a disposizione per più DTE che ne sfruttano la capacità di calcolo
+\item\textit{Reti ad elaborazione \textbf{distribuita}}: il calcolo da elaborare è suddiviso in più sotto problemi affidati ognuno a diversi nodi della rete
+\end{itemize}
+\para{Informazione}: grandezza misurabile con unità di misura il \textbf{bit}. Vale:\\ \code{Q=log\textsubscript{2}M}\\
+con \code{M}\textit{= numero dei possibili stati di un sistema,} \code{Q}\textit{= bit necessari per distinguerli.} 
+\para{Carattere}: in un sistema elaborativo è associato a sequenze significative di bit, esistenti all'interno di \textit{codici} come:
+\begin{itemize}
+\item BCD (Binary Decimal Code)
+\item EBCDIC (Extended Binary Coded Decimal Code): codice a 8 bit
+\item ASCII (American Standard Code for Information Interchange): \textit{codice a 7 bit}
+\end{itemize}
+\subsection{Qualità rete}
+\subsubsection{Affidabilità}
+\textbf{Affidabilità}: capacità di una rete di consegnare l'informazione priva di errori, rimediare a malfunzionamenti ed essere robusta.
+\subsubsection{Sicurezza}
+\textbf{Sicurezza}: protezione dei dati della rete, al fine di impedire accessi non autorizzati, modifiche non autorizzate o perdite dati.
+\subsubsection{Prestazioni}
+Valutate misurando:
+\begin{itemize}
+\item \textbf{Ritardo}: tempo di transito dei dati
+\item\textbf{Tempo di risposta}: intervallo di tempo compreso tra la richiesta e l'arrivo della risposta
+\item\textbf{Throughput}: quantità effettiva di dati spediti nell'unità di tempo \textit{(velocità)}
+\item\textbf{Banda}: banda passante di frequenze utilizzabili per la trasmissione di segnali \textit{(massima velocità di trasferimento)}
+\end{itemize}
+\paragraph{Valutazione velocità} 
+\begin{itemize}
+\item\textbf{ping}: il comando \code{ping} indica se un host remoto è raggiungibile; Usa l'\textit{echo message} del protocollo ICMP per \textit{forzare l'host a rispedire indietro il pacchetto inviato.}
+\item\textbf{traceroute}: comando che indica l'instradamento dei pacchetti in uscita, visualizzando tutti i dispositivi di rete attraversati
+\item Speedtest, Pingtest, NetIndex, Ne.Me.Sys
+\end{itemize}
+\subsection{Tipi di rete}
+\subsub{PAN} Personal Area Network: Rete personale che non si estende per più di 10-20 metri. Il termine si riferisce propriamente a reti con connessioni via cavo.
+\subsub{LAN} Local Area Network: Rete con un raggio limitato ad una abitazione o un edificio.
+\subsub{WAN} Wide Area Network: Rete che copre ampie aree geografiche connettendo tra loro più sottoreti locali. 
+\subsub{MAN} Metropolitan Area Network: Rete metropolitana caratterizzata da una velocità di trasmissione molto elevata (tipicamente fibra ottica).
+\subsub{GAN} Global Area Network: Internet.
+\subsection{Topologie di rete}
+\subsub{Rete a dorsale}
+I dispositivi sono connessi tutti ad una via di trasmissione principale detta appunto dorsale. Un'interruzione in qualunque punto della dorsale compromette tutta la rete.
+\subsub{Rete ad albero} La trasmissione avviene in modo gerarchico tra i nodi padre e figlio, fino ad arrivare alla \textit{root} dalla quale dipende tutto il funzionamento della rete.
+\subsub{Rete a stella} Tutti i dispositivi sono connessi ad un \italic{hub} (router o swith di rete), più economico da sostituire in caso di rottura. Inoltre, in caso di danni ad un cavo, viene disconnesso solo un terminale. Questa topologia è tipicamente utilizzata per la realizzazione di reti LAN.
+\subsub{Rete ad anello} Le informazioni vengono passate da un dispositivo all'altro in modo ciclico, la trasmissione è unidirezionale anche se questo si può ovviare con un secondo anello in direzione opposta. Questa topologia era tipica delle LAN TokenRing, ora viene utilizzata principalmente nelle MAN in fibra ottica.
+\subsub{Rete a maglia} In inglese mesh, è una rete in cui ogni dispositivo può essere connesso ad ogni altro dispositivo ottenendo di fatto un grafo connesso. \'E la topologia di rete meno vulnerabile, ma è poco utilizzata nelle reti cablate a causa dei costi. \'E diffusa invece nelle WLAN, spesso nella versione \textit{ad hoc}, dove i collegamenti nascono e muoiono dinamicamente. In questa topologia il Routing viene effettuato da ogni nodo.
+\subsub{Grid}
+Rete di computer incentrata sulla condivisione dinamica delle risorse, nel contesto di calcolo distribuito e HTC (\textit{High Troughput Computing}).\\ Rispetto ad un cluster, la grid coinvolge anche l'hardware, grazie a librerie \textit{middleware} (\textit{software glue}) che si collocano tra il S.O. e lo strato fisico della macchina.%qualche link forse 
+\newpage
+\subsection{Protocolli Basilari}
+\subsubsection{RTS-CTS}
+Request-to-Send/Clear-to-Send, basato su interfaccia seriale.\\
+Una \textit{stazione} che vuole trasmettere, invia una richiesta (\textbf{RTS}) alla stazione master; Se il \textit{master} può rispondere, autorizza (\textbf{CTS}) la stazione a trasmettere, la quale invierà i suoi dati e solo dopo il master le invierà un messaggio di ACK.\\
+Questa procedura temporizzata è detta \textbf{handshake}.
+\subsubsection{XON-XOFF}
+Usato tra DTE/DCE vicini; \\Quando una stazione trasmette dati, questi vengono memorizzati dalla stazione che li riceve. Se la \textit{memoria di questa stazione è piena}, questa invierà a quella che trasmette il carattere \textbf{XOFF} per impedirne la trasmissione. Appnea il DTE torna in grado di memorizzare, invia il carattere \textbf{XON} e la stazione primaria torna a trasmettere.
+\subsubsection{ARQ}
+Automatic Repeat Query, protocollo \textit{Full-Duplex}.\\
+Usa il concetto di finestra scorrevole\footnote{La \textit{finestra del mittente} specifica i frame che può spedire in quel momento, \textit{la finestra del destinatario} quelli che può ricevere}, dividendo il messaggio spedito in sequenza di \textbf{frame}: ARQ spedisce più frame prima di ricevere un \textit{riscontro} (costituito da due numeri di sequenza -0 e 1- per distinquere un frame da quello successivo).\\
+\paragraph{Gestione errori}
+\begin{itemize}
+\item\textbf{Go-back-N}: un frame danneggiato implica la ritrasmissione di N frames
+\item\textbf{Selettivo}: vengono ritrasmessi solo i frames danneggiati
+\end{itemize}
+
+\newpage
+\section{Livello Fisico}
+\subsection{Segnali}
+Lo strato fisico è adibito al trasporto dei segnali (e quindi dei dati); questi, proprio come i dati, possono essere \textbf{analogici}\textit{ (rappresentazione continua nel tempo, con infiniti livelli di intensità) }o \textbf{digitali}\textit{ (rappresentazione discreta, con livelli di intensità pari a 0 o 1)}
+\para{Segnali analogici} segnale sinusoidale che varia nel tempo secondo la legge:  \[u=Usen(\omega t+\varphi )\] dove 
+\begin{itemize}
+\item $u$ è l'ampiezza istantanea
+\item $U$ è l'ampiezza massima 
+\item $\omega $ è la \textit{velocità angolare}, ovvero la variazione dell'angolo nel tempo, espressa in radianti al secondo
+\item $\varphi $ è la \textit{fase}, ossia lo sfasamento rispetto all'origine, espresso in radianti
+\item $t$ è il tempo (variabile)
+\item $T$ è il \textit{periodo}, cioè l'intervallo di tempo (in secondi) impiegato dall'onda per effettuare un'oscillazione completa
+\item $f=1/T$ è detta \textit{frequenza}, misurata in Hz ($1/s $)
+\item $\lambda =c/f =cT$ è detta \textit{lunghezza d'onda} (dove $c$ è la velocità di propagazione del segnale), ossia la distanza tra due massimi relativi.
+\end{itemize}
+\textbf{Spettro}: insieme di frequenze che un segnale contiene;\\
+\textbf{Larghezza di banda}: intervallo di frequenze contenute in un segnale composto (max\_Hz - min\_Hz)
+\para{Teorema di Fourier} afferma che un segnale può essere rappresentato come somma di sinusoidi (potenzialmente infinite) con caratteristiche differenti. \\Quindi un segnale digitale altro non è che un segnale analogico composto da banda (teoricamente) infinita.
+Il problema è come trasmettere un segnale analogico in formato digitale tra due punti. Due possibilità: Trasmissione del segnale di base o con modulazione del segnale
+\newpage \subsubsection{Filtri}
+Sistema che blocca o lascia passare diversi range di frequenze di un segnale. \\Possono essere \textit{attivi o passivi} a seconda dei materiali utiizzati. Abbiamo 4 tipi di filtro:
+\para{Filtro passa basso} permette il passaggio di frequenze \textbf{al di sotto} di una determinata frequenza (\textit{frequenza di taglio}), la quale in genere è scelta in base alla relazione V\_out/V\_in = (1/2)\textsuperscript{1/2}, con V\_out e V\_in rispettivamente segnale in uscita ed in ingresso nel filtro.
+\para{Filtro passa alto} permette il passaggio di frequenze al di sopra della \textit{frequenza di taglio}.
+\para{Filtro passa banda} fa passare le frequenze all'interno di un intervallo di taglio (\textit{banda passante)} ed attenua le frequenze al di fuori di esso.
+\para{Filtro elimina banda} non permette il passaggio di frequenze in un dato intervallo.
+\subsection{Modulazione del segnale}
+Operazione reversibile secondo la quale \textit{il segnale del mezzo trasmissivo}(\textbf{portante}) viene modificato in \textit{frequenza (f), ampiezza (U) o fase ($\varphi$)} in accordo al \textit{segnale d'ingresso (con i relativi dati da trasmettere)} (\textbf{modulante}).
+\subsubsection{Modulazione a Onda Continua}
+Modulazione del segnale in cui la modulante e la portante sono segnali analogici
+\boximage[continua.jpg][scale=0.5]{Modulazione segnale a onda continua}\newpage
+\subsubsection{Modulazione Impulsiva}
+Modulazione di segnale in cui la modulante è un segnale analogico mentre la portante è un segnale digitale.
+\boximage[digitale.jpg][scale=0.6]{Modulazione segnale a onda digitale}\newpage
+\subsubsection{Modulazione Digitale}
+Modulazione del segnale in cui sia modulante che portante sono segnali digitali.
+\boximage[impulsiva.jpg][scale=0.6]{Modulazione segnale a onda impulsiva}
+\newpage
+\subsection{Alterazione del segnale}
+Processi di modifica del segnale che lo portano a differenziarsi da quello originale. Le principali cause sono:
+\para{Attenuazione}
+Perdita di energia del segnale [dB]. Si risolve con gli \textbf{Amplificatori} per il sgnale \textit{analogico} e con i \textbf{Rigeneratori} per il segnale \textit{digitale}.
+\para{Distorsione}
+Cambiamento della forma del segnale
+\para{Rumore}
+Insieme dei segnali \textit{indesiderati} che si sovrappongono al segnale utile
+\para{Interferenze}
+Sovrapposizioni di altre informazioni che creano disturbo.
+\begin{itemize}
+\item interferenza \textbf{ISI} (intersimbolica): causata dalle limitazioni della banda
+\end{itemize}
+\subsection{Multiplazione}
+La multiplazione è una tecnica che prevede l'\textit{impiego di un unico canale }per più comunicazioni differenti contemporanee.
+\subsub{FDM}
+\textbf{Frequency Division Multiplexing}: usata nelle comunicazioni telefoniche, prevede che in fase di trasmissione le comunicazioni subiscano uno \textbf{shift di frequenza }e che la frequenza originaria sia \textit{ripristinata }all'arrivo alla destinazione. Il numero di canali multiplabili dipenderà dalla capacità del mezzo trasmissivo.
+\subsub{WDM}
+\textbf{Wavelength Division Multiplexing}: utilizzata per i segnali ottici, consiste nel \textit{modulare la lunghezza d'onda }del raggio luminoso, così da inviare \textit{diversi raggi }contemporaneamente.
+\para{DWDM} \textit{Dense WDM}: capace di modulare 16 lunghezze d'onda alla distanza di 0.8 nm.
+\para{CWDM} \textit{Coarse WDM }(grossolana): utilizza maggiori spaziature tra i canali, con risparmio a livello economico. 
+\subsub{TDM}
+\textbf{Time Division Multiplexing}: nella TDM, i dispositivi \textit{ottengono a turno l'uso esclusivo del canale }di comunicazioni e delle risorse ad esso dedicate, ad esempio la banda.\\
+La TDM si suddivide in:
+\begin{itemize}
+\item \textbf{sincrona}: gli intervalli di tempo sono indipendenti dalla presenza di dati da spedire;
+\item \textbf{statistica}: gli intervalli vengono allocati solo quando ci sono dati da inviare. La \textit{velocità }complessiva è minore della somma delle velocità dei canali.
+\end{itemize}
+
+\newpage \subsection{Limiti di velocità}
+I canali possono essere \textit{perfetti} (non vi sono alterazioni), \textit{ideali} (vi è al più un'alterazione costante) o \textit{reali}.\\
+Fattori che limitano la velocità:
+\begin{itemize}
+\item\textbf{Latenza}: tempo necessario ad un messaggio per arrivare a destinazione. Tiene conto del:
+\begin{itemize}
+\item Tempo di propagazione (tempo di transito)
+\item Tempo di trasmissione (tempo necessario per immettere i bit in rete)
+\item Tempo di inoltro (tempo necessario ai nodi per consegnare il messaggio)
+\item Tempo di attesa (tempo di attesa nelle code, dipende dal carico di rete)
+\end{itemize}
+\item\textbf{Jitter}: variabilità del ritardo con cui i pacchetti vengono ricevuti
+\item\textbf{Velocità di modulazione}: numero di simboli trasmessi in un secondo [baud=simboli/sec]
+\end{itemize}
+Riguardo la massima velocità in un canale (Max\_Data\_Rate), vi sono due teoremi; In genere si usa prima Shannon per calcolare il Max\_Data\_Rate, per poi sostituirlo in Nysquist per calcolareil numero dei livelli da usare in un canale.
+\subsubsection{Nysquist}
+\code{Max\_Data\_Rate = 2B*log\textsubscript{2}V},\\con V=numero di livelli di tensione nel segnale.
+\subsubsection{Shannon}
+\code{Max\_Data\_Rate = C = B*log\textsubscript{2}(1 + S/N)},\\ con S=potenza del segnale e N=potenza del rumore
+\newpage
+\subsection{Trasmissioni}
+Le trasmissioni di dati possono essere 
+\subsubsection{Asincrone}
+Non governata da un \textit{segnale di clock}, ma con segnali inviati a frequenze e fasi diverse. La trasmissione di dati inizia con l'invio di uno \textit{start-bit}, la trasmissione in \textit{idle} è rappresentata da una sequenza di \textit{1}, e la fine della trasmissione da uno \textit{stop-bit}.
+\subsubsection{Sincrona}
+Scandita da un \textit{clock }che sincronizza trasmettitore e ricevitore; i dati vengono raggruppati in blocchi e trasmessi secondo il tempo dato dal clock.\\ Il ricevitore ha sia il \textit{sincronismo a bit} (estrae singoli bit dai dati in ricezione), sia il \textit{sincronismo di carattere} (estrae interi caratteri dal flusso di bit)
+\subsubsection{Orientata al carattere}
+Usata per trasmettere informazioni testuali, prevede la lettura dei bit a gruppi di otto. \\La sincronizzazione \textit{iniziale} è ottenuta tramite una \textit{serie di caratteri di controllo} \textbf{SYN}, il primo dei quali viene ricercato spostandosi di un bit alla volta.\\
+Una volta raggiunta la sincronia si ricerca il carattere di controllo \textbf{STX }che \textit{sancisce l'inizio della trasmissione}, ed infine il carattere \textbf{ETX} che ne \textit{sancisce la fine}.\\ Per \textit{evitare che i dati vengano scambiati per caratteri di controllo }si fa precedere ai caratteri \textit{STX }e\textit{ ETX}, un altro carattere di controllo chiamato \textbf{DLE }(tutti \textbf{1 }o tutti \textbf{0 }a seconda del sistema) e in invio viene eseguito il \textbf{byte stuffing} dei dati: \textit{occorrenze di DLE }nei dati vengono \textit{duplicate }in modo da renderle riconoscibili.   
+\subsubsection{Orientata al bit}
+La sincronizzazione si basa su degli \textbf{idle bytes} (\code{011111111}), inviati nei \textit{periodi di inattività}, e dei \textbf{flag bytes} (\code{01111110}) che indicano l\textit{'inizio e fine della trasmissione};\\il rischio di scambiare i flag con i dati è scongiurato dall'utilizzo del \textbf{bit stuffing}: ogni volta che si incontrano \textit{5 bit uguali a 1} viene \textit{aggiunto uno 0 }che verrà poi rimosso dal ricevente.
+\newpage
+\subsection{Codifiche}
+\subsub{NRZ}
+\textbf{Not Reduced Zero}: lo stato digitale \textbf{1 }viene rappresentato da \textit{un segnale alto }mentre un lo stato \textbf{0 }viene rappresentato da \textit{un segnale basso};\\Buona resistenza agli errori, il problema è che \textit{su lunghe trasmissioni si perde la sincronia }nella trasmissione di lunghe serie di bit di uguale valore.
+\subsub{RZ}
+\textbf{Return to Zero}: simile all'NRZ con la differenza che \textbf{a metà di ogni impulso }il segnale \textit{torna sempre a zero}; il \textit{clock }ha quindi \textit{frequenza doppia }per dimezzare la durata di un impulso. \\Questo metodo non causa desincronizzazione ma ha un più alto rischio di errore. \\Può essere anche a \textit{tre livelli }(\textbf{RZ bipolare}), ed in tal caso il \textit{livello inferiore }(\textbf{-V}) rappresenta lo \textbf{0 }logico, il \textit{livello superiore }(\textbf{+V}) l'\textbf{1 }logico e \textit{a metà di ogni impulso }si ritorna al \textit{livello intermedio }(\textbf{0}), che non rappresenta di per sé alcun valore logico.
+\subsub{Manchester}
+Come nella RZ, la frequenza del \textit{clock è raddoppiata}. Allo \textbf{0 }logico corrisponde una \textit{transizione dal basso verso l'alto}, mentre all'\textbf{1 }logico una \textit{transizione dall'alto verso il basso} (la transizione avviene a metà dell'impulso).
+\subsub{AMI}
+\textbf{Alternative Mark Inversion}: come la RZ bipolare, utilizza \textit{tre stati}, con la differenza che lo \textbf{0 }logico corrisponde allo \textit{stato 0 }mentre l'\textbf{1 }logico \textit{si alterna fra +V e -V}.
+Questa codifica è usata nella \textit{PCM}.
+\subsub{Scrambling}
+Lo scrambling è un metodo che consente di risolvere alcuni problemi nelle \textit{trasmissioni di lunga distanza}, consiste nel \textbf{mescolare }in modo "intelligente" \textbf{i bit }per mantenere attiva la linea, è utilizzata nella codifica 2B1Q (two Binary, one Quaternary).
+\boximage[encoding.jpg][scale=0.3]{Encoding}
+\newpage
+\subsection{Modem}
+Un modem (contrazione di modulatore/demodulatore) è un DCE con funzionalità di \textbf{Modulazione} in trasmissioni \textit{analogiche e digitali}. Esistono svariati tipi di modem:
+\begin{itemize}
+\item \textbf{Modem in banda fonica};
+\item \textbf{Modem ISDN} (128 kbps);
+\item \textbf{Modem xDSL} (640 kbps-100 Mbps);
+\item \textbf{Modem per PLC} (Power Line Communications), comunicazioni su linea elettrica (640 kbps-200 Mbps);
+\item \textbf{Modem GPRS, UMTS e HSDPA}, spesso integrati nei cellulari o come PC card;
+\item \textbf{Modem in banda base}, utilizzati per scopi industriali, che mettono in comunicazione diretta due utenti su doppino telefonico.
+\end{itemize}
+Ognuno di questi modem può essere inoltre \textbf{interno} o \textbf{esterno} al \textit{DTE}. \\Tra i modem \textbf{esterni}, in base al tipo di collegamento al DTE, si distinguono:
+\begin{itemize}
+\item \textbf{Modem seriali}, collegati con cavo seriale tramite interfaccia \textit{RS-232} o \textit{USB};
+\item \textbf{Modem paralleli}, collegati con cavo parallelo alle porte LPT1 o LP2.
+\end{itemize}
+Tra i modem \textbf{interni} si distinguono invece:
+\begin{itemize}
+\item \textbf{Modem PCI}, che lavorano appunto sul BUS PCI (Peripheral Component Interconnect);
+\item \textbf{Modem PCMCIA, PC card o Express card}, utilizzati esclusivamente nei portatili.
+\end{itemize}
+\para{Modem in banda fonica}
+Si usano quando c'è necessità di trasmettere i \textit{segnali digitali }sulla \textit{linea telefonica }e viceversa. \\
+Dato che la banda disponibile sulla linea telefonica è di $4 kHz$, ciò rende lenta la trasmissione di segnali digitali (anche per via dell'\textit{Attenuazione} delle alte frequenze); Un \textit{modem fonico }opera dunque una \textbf{Modulazione digitale} volta a comprimere la banda dei segnali emessi dal \textit{DTE}.
+\newpage
+\subsection{Interfacce Hardware}
+Dal punto di vista \textbf{fisico}, un'interfaccia è caratterizzata da \textbf{un canale di trasmissione} (\textit{identificato da un mezzo trasmissivo, due connettori e due porte poste agli estremi}); \\Dal punto di vista \textbf{logico}, da una \textbf{modalità di trasmissione} (\textit{seriale o parallela}). 
+\subsub{Interfacce parallele}
+Le interfacce parallele trasmettono segnali \textit{da più pin in contemporanea.}
+\para{Interfaccia Centronics}
+Ormai obsoleta, originariamente monodirezionale, è stata impiegata soprattutto per collegare i DTE alle stampanti, ma esiste anche uno standard bidirezionale per il collegamento di dispositivi di input.\\
+Tale interfaccia consente di trasferire \textbf{8 bit in parallelo }nello standard \textbf{TTL}\footnote{Transistor-Transistor Logic: prima tecnologia di circuiti integrati diffusa su scala globale}.\\
+La porta parallela del DTE è un \textit{connettore femmina }detto "a vaschetta" o \textbf{DB 25}, con \textbf{25 pin}, mentre sulle periferiche è presente un connettore differente, chiamato appunto \textbf{Centronics}, dal nome del primo costruttore. Alle due porte corrispondono chiaramente due diversi connettori maschio.
+\subsub{Interfacce seriali}
+le interfacce seriali trasmettono \textit{da un solo pin alla volta}.
+\para{RS-232}
+L'RS-232 è uno standard che permette la realizzazione di una trasmissione seriale tra un DTE e un DCE, in \textit{modalità sia sincrona che asincrona}. \\Per questa interfaccia esistono due diversi tipi di connettore: quello a \textbf{25 pin }e quello ridotto, \textbf{a 9 pin}.
+\para{USB}
+L'USB (\textit{Universal Serial Bus}) ha soppiantato le interfacce precedentemente descritte. Essa risulta vantaggiosa, oltre che in termini di velocità e versatilità, poiché può \textit{fornire direttamente l'alimentazione }alle periferiche e consente di \textit{creare }\italic{collegamenti a caldo} (interfacce \textit{plug-and-play}).\\
+I connettori USB sono molteplici (\textit{tipi A, B e C con rispettive varianti miniaturizzate}), ma tutti con \textbf{quattro poli }ed uguali funzionalità.\\
+Il sistema USB è \textbf{asimmetrico}: consiste in \textit{un singolo gestore }e \textit{molte periferiche }collegate ad albero, attraverso  hub. Supporta fino a un massimo di \textit{127 }periferiche per gestore. max velocità = 7,2 Gbps (versione USB 3.1).
+\para{IEEE 1394}
+La IEEE 1394 è un'\textit{interfaccia bidirezionale }in grado di gestire fino a \textit{63 dispositivi }sulla stessa linea ad alta velocità, miscelando dati \textit{sincroni ed asincroni}. \\Come la USB, consente di collegare e scollegare i dispositivi a caldo tramite due diversi tipi di connettore, l'uno a \textbf{quattro pin}, senza alimentazione, l'altro a \textbf{6 pin}.\\
+Il limite principale di tale interfaccia è \textit{la portata}, limitata a \textit{pochi metri}.
+\para{RS422}
+Utilizzato principalmente per realizzare \textit{collegamenti punto-a-punto }tra due apparecchiature con \textit{alta immunità ai disturbi }anche a distanze considerevoli e a velocità anche superiori a 10 Mbps.
+Prevede, per ogni coppia di fili, \textit{trasmissione unidirezionale }e non reversibile. 
+\subsubsection{Strutture di rete}
+Il doppino telefonico è il mezzo trasmissivo più utilizzato per la realizzazione di collegamenti. Nel caso di reti \textbf{PSTN} (Public Switching Telephone Network) vi sono tratti di cavo che contengono centinaia di doppini (\textit{cavi multicoppia) }connessi da \textit{punti fisici di flessibilità} (armadio ripartilinea e distributore) usati per il controllo.\\
+I tratti di doppino che formano la rete sono distinti in:
+\begin{itemize}
+\item \textbf{rete di accesso primaria}: t\textit{ra centrale ed armadio}, formata da due cavi con centinaia di coppie
+\item\textbf{rete di accesso secondaria}: \textit{tra armadio e distributore}, formata da cavi con decine di coppie
+\item\textbf{cablaggio verticale}: \textit{tra distributore e borchia di accesso}, domicilio utente
+\end{itemize}
+\para{FTTF} Nel caso di Fiber To The Home in FIbra ottica, si hanno:
+\begin{itemize}
+\item\textbf{OLT}: \textit{Optical Line Termination}, interfaccia lato rete
+\item\textbf{ONU}: \textit{Optical Network Unit}, interfaccia con terminale, vicino all'utente
+\item\textbf{ONT}: \textit{Optical Network Termination}, terminazione di rete ottica
+\end{itemize}
+\paragraph{Reti AON} \textit{Active Optical Network} sono strutture di rete \textbf{P2P }(point-to-point), nel senso che \textit{ogni utente ha il proprio tratto di fibra}, che giunge direttamente al proprio \textit{ONT}. \\Nelle AON si utilizzano \textbf{componenti attivi}, come amplificatori, ripetitori, router o switch. SOno caratterizzate da una \textit{topologia a stella}; Garantisce, a costi elevati, la massima velocità di trasmissione.
+\paragraph{Reti PON} \textit{Passive Optical Network},
+utilizzano solo \textbf{componenti passivi }e sono caratterizzate da una \textit{topologia ad albero }. \\In esse, \textit{tratti di fibra vengono condivisi tra più utenti}, e solo alla fine uno \textbf{splitter ottico }suddivide il segnale in più segnali uguali ma di potenza minore in modo da distribuirlo.\newpage
+\subsection{Protocolli di primo livello}
+\subsubsection{PDH}
+\textbf{Plesiochronous Digital Hierarchy}: tecnologia utilizzata per trasportare \textit{grandi quantità di dati} su apparecchiature di trasporto digitali. Rappresenta il primo metodo di \textbf{Multiplazione} per trasmettere su molti canali contemporaneamente (\textit{30}).\\
+Tramite un multiplexer \vedi{TDM} si uniscono i diversi canali; questo dovrà inserire \textit{bit aggiuntivi }(i \textbf{dummy bits}) per rendere sincrono il flusso in entrata al \textbf{demultiplexer }ricevente, che li riconosce e li elimina.\\
+Il PDH \textit{non monitorale prestazioni }della rete e \textit{non garantisce buone performance per trasferimento contemporaneo }di audio, video e dati. 
+\subsubsection{SDH}
+\textbf{Synchronous Digital Hierarchy}: protocollo usato per la \textit{trasmissione di fonia e dati su fibra e rete }elettrica, anch'esso ha il compito di aggregare flussi di dati con bitrate diversi e spedirli tutti insieme a grandi distanze.\\
+A differenza del PDH, prevede che \textit{tutti gli elementi
+della rete siano sincronizzati da uno stesso \textbf{clock}}. \\Inoltre permette di trasferire informazioni essenziali per la corretta gestione della rete, non presenta limiti di distanza e può offrire una velocità di \textit{140Gb/s}. L'unico vincolo è dovuto alla multiplazione \vedi{TDM}, che quindi fornisce ad ogni utente una capacità costante nel tempo.
+
+\subsubsection{DSL}
+\textbf{Digital Subscriber Line}, famiglia di tecnologie che fornisce trasmissione digitale di dati su \textbf{Doppino telefonico}, comunemente utilizzata nella connessione ad Internet da utenza domestica tramite l'\textbf{ADSL} \textit{(Asymmetrical DSL). }\\Il \textit{protocollo ADSL }sfrutta completamente la banda passante del doppino telefonico, utilizzando due tecniche di modulazione: la \textbf{CAP }(\textit{Carrierless Amplitude Phase}, variante della QAM) e la \textbf{DMT }(\textit{Discrete Multi Tone}).\\
+Con un \textit{filtro DSL}, chiamato \textbf{splitter}, le bande di frequenza vengono \textit{tripartite}, per l'uso contemporaneo di un'unica linea telefonica \textit{sia per il servizio ADSL che per le chiamate telefoniche}.\\
+\textbf{Velocità teoriche}: \textit{8Mbit/s in download} e\textit{ 800kbit/s in upload}; \textbf{Velocità reali}: 1,5Mbit/s in download e 256kbit/s in upload.
+\subsection{Dispositivi livello Fisico}
+\subsubsection{Ripetitore}
+Dispositivo di rete che si limita a ripetere i pacchetti che gli arrivano.\\
+Si utilizza quando esiste una limitazione fisica alla lunghezza della \textit{LAN}: le reti collegate possono in tal caso essere viste, da un punto di vista logico, come una rete unica.
+\subsubsection{Hub} 
+Uno hub è un dispositivo di rete che funge da nodo di smistamento dati di una una \textit{Rete a dorsale} o in una \textit{Rete a stella}. Poiché non è in grado di ri-inviare i pacchetti se non in \textit{broadcast}, è attualmente impiegato in misura molto minore rispetto allo \textit{Switch}.
+\newpage
+\section{Livello Collegamento}
+\subsection{Specifiche protocolli}
+I protocolli di secondo livello si dividono in due principali categorie:
+\begin{itemize}
+	\item\textbf{Asincroni}: consentono soltanto trasmissioni di caratteri singoli; Sono asincroni in quanto non si ha un preciso intervallo di tempo tra l'invio di due caratteri. È comunque obbligatorio definire un \italic{bit time} di durata del carattere.
+	\\I protocolli asincroni sono detti anche \textbf{start/stop}: ogni carattere è composto da un \textbf{bit di start}, dal \textit{bit del carattere vero e proprio} da trasmettere, da un \textbf{bit di parità} (volto al controllo dell'errore) e da uno o due \textbf{bit di stop}.
+	\\L'utilizzo di questi bit in forma, rispettivamente, di \textit{header} e \textit{trailer} consente al ricevente di distinguere i singoli byte trasmessi.
+	\item\textbf{Sincroni}: mittente e destinatario sincronizzano i loro clock grazie a particolari caratteri.
+	\\A loro volta si suddividono a seconda della trasmissione:
+	\begin{itemize}
+		\item[-]Orientata al carattere: utilizzano il carattere di sincronismo \textbf{SYN}. Vi appartiene \textit{BSC}.
+		\item[-]Orientata al bit: la sincronia è garantita da 2 byte detti \textbf{flag} posti uno all'inizio e l'altro alla fine del pacchetto. Vi appartiene \textit{HDLC}.
+	\end{itemize}
+\end{itemize} 
+\subsection{BSC}
+\textbf{Binary Synchronous Communication} è un protocollo sincrono orientato al carattere. Il flusso trasmissivo è di tipo \textbf{Half-Duplex} con velocità tra \textit{1200 e 19200 bps}.
+\\Il frame è composto da circa 100 byte, divisi tra messaggio da trasmettere e caratteri di controllo.
+\\La codifica binaria usata può essere \textit{ASCII, EBCDIC } o\textit{ SBT }(Six Bit Transcode).
+\\In base alla rete su cui opera, il BSC si classifica in:
+\begin{itemize}
+	\item \textbf{BSC1}: rete \textit{dedicata }punto-punto;
+	\item \textbf{BSC2}: rete \textit{commutata }punto-punto;
+	\item \textbf{BSC3}: rete multipunto.
+\end{itemize}
+Nei due casi di \textbf{rete punto-punto }il trasmettitore invia \textit{caratteri di sincronismo (\textbf{PAD }o \textbf{SYN}) seguiti da \textbf{ENQ}}; \footnote{Dato che i DTE sono sia trasmettitori che riceventi, può succedere che vogliano trasmettere nello stesso momento: uno dei due diventerà una \textit{stazione primaria }che ripete l'invio, mentre l'altro sarà una \textit{stazione
+secondaria }che dovrà rinunciare.} Il ricevente risponderà con \textbf{ACK }\textit{se è pronto}, oppure \textbf{NAK }se non può acquisire i dati. Il \textit{collegamento viene terminato }con il messaggio \textbf{EOT}.
+\\Nel caso di \textbf{rete multi-punto} l'elaborazione centrale effettua un'\textit{interrogazione ciclica }(\textbf{pollic}) per individuare il terminale a cui collegarsi.
+\newpage
+\subsection{HDLC}Il protocollo \textbf{High Level Data Link Control} costituisce lo standard ISO per trasmissioni \textbf{sincrone Full-Duplex}; è \textit{orientato ai bit }e utilizzato su reti di grandi dimensioni.
+\\Prevede 3 tipi di terminali:
+\begin{itemize}
+	\item \textbf{Stazione primaria}: detta anche \italic{master}, ha il compito di controllare il collegamento inviando i comandi di controllo;
+	\item \textbf{Stazione secondaria}: agisce in base ai comandi della stazione primaria e può spedire soltanto \textit{pacchetti di risposta};
+	\item \textbf{Stazione combinata}: può inviare sia comandi sia risposte.
+\end{itemize}
+La connessione fra mittente e destinatario è detta \textbf{bilanciata} se sono entrambi stazioni combinate; al contrario, si parla di connessione \textbf{sbilanciata}: in questo caso il protocollo lavora in modalità \textbf{Half-Duplex} ed i messaggi inviati dal master prendono il nome di \textbf{command}, mentre quelli delle stazioni secondarie sono detti \textbf{response}.
+\\Nello specifico, HDLC può lavorare in 3 diverse modalità:
+\begin{itemize}
+	\item \textbf{NRM} \textit{(Normal Response Mode): }connessione half-duplex sbilanciata.
+	\\Le stazioni secondarie possono trasmettere anche senza autorizzazione esplicita del master;
+	\item \textbf{ABM} \textit{(Asynchronous Balanced Mode): }bilanciata full-duplex tra due stazioni paritetiche;
+	\item \textbf{ARM} \textit{(Asynchronous Response Mode): }come NRM ma limitata a due stazioni.
+\end{itemize}
+\para{Frame:}
+Il protocollo HDLC prevede che le stazioni possano scambiarsi \textbf{frame} di 3 tipologie:
+\begin{itemize}
+	\item \textbf{I-frame}: il tipo \italic{\textbf{I}nformation} è usato per trasportare i dati dal \textit{Livello di rete}. 	
+	\item \textbf{S-frame}: il tipo \italic{\textbf{S}upervisory} è usato per controllare il flusso e gli errori;	
+	\item \textbf{U-frame}: il tipo \italic{\textbf{U}nnumbered} fornisce funzioni di	controllo aggiuntive, come informazioni per iniziare/terminare la connessione.
+\end{itemize}
+I frame sono composti dai seguenti \textit{sottocampi}:
+\begin{itemize}
+	\item \textbf{flag}: due sequenze di 8 bit \textbf{\code{01111110}} usate come \textit{inizio e fine della trasmissione}. La stessa sequenza è usata come \textit{idle byte}.
+	\\La forma del flag rende necessario l'uso del \textbf{bit stuffing} \textit{(aggiunta di un bit a \code{0} in mezzo a lunghe sequenze di\code{1}}.
+	\item \textbf{indirizzo}: è un campo di 8 bit: identifica la \textit{stazione che ha trasmesso }o che \textit{deve ricevere }il frame;
+	\item \textbf{controllo}: 8 bit o 16 bit contenenti \textit{informazioni di controllo }o definizione del pacchetto. (N.B: il bit a sinistra è il meno significativo). \\Di seguito le possibile trame:
+	\begin{itemize}
+		\item[-]\italic{\textbf{Information}}: la forma è \code{\textbf{0SSSPRRR}}, dove \code{SSS} \textit{conta i frame trasmessi}, \code{RRR} \textit{conta quelli ricevuti}.
+		\\\code{P} è detto bit P/F (\italic{Poll/Final}):
+		\item[-]\italic{\textbf{Supervisory}}: la forma è \code{\textbf{10TTPRRR}}, in cui i primi due bit sono fissi ed identificano il tipo S-frame; \code{P} ha lo scopo visto in precedenza.
+		\\I due bit \code{TT} comunicano che:
+		\begin{itemize}
+			\item[- 00]= \italic{Received Ready}: ricevuti tutti i frame, stazione pronta a ricevere;
+			\item[- 01]= \italic{Reject}: problema di acquisizione, necessario ritrasmettere da \code{RRR};
+			\item[- 10]= \italic{Receive Not Ready}: la stazione non può ricevere;
+			\item[- 11]= \italic{Selective Reject}: invito a rinviare il frame numero \code{RRR}.
+		\end{itemize}
+		
+		\item[-]\italic{Unnumbered}: la forma è \code{11MMPMMM}.		 
+	\end{itemize}
+	\item \textbf{campo informativo}: contiene i dati significativi da trasmettere. La lunghezza è arbitraria .N.B: questo campo è assente nei S-frame;
+	\item \textbf{campo FCS} (Frame Check Sequence): 16 o 32 bit utilizzati per rilevare eventuali errori di trasmissione.
+\end{itemize}
+
+\subsubsection{SDLC}
+HDLC deriva da SDLC \textbf{(Synchronous Data Link Control)};
+Rispetto ad HDLC, il protocollo SDLC:
+\begin{itemize}
+	\item ha il campo FCS di 8 bit;
+	\item supporta configurazioni a loop, come il token ring;
+	\item può lavorare solo in NRM;
+\end{itemize}
+\subsection{PPP}
+Il \textbf{Point-to-Point Protocol} è un protocollo usato nelle \textit{connessioni punto-punto} e trova la sua più ampia diffusione in ambito \textit{WAN}.
+\\Si può definire un'estensione del protocollo \textit{HDLC} in quanto il funzionamento è analogo. Utilizza solo \textbf{U-frame}, la cui struttura differisce da quelli in HDLC nei seguenti campi:
+\begin{itemize}
+	\item \textbf{indirizzo}: i suoi 8 bit sono sempre \code{11111111} dato che le trasmissioni avvengono esclusivamente in \textit{broadcast};
+	\item \textbf{controllo}: di 8 bit che, in PPP sono del valore fisso \code{11000000} e rappresentano il comando UI (\textit{unnambered information}), ovvero un messaggio che contiene dati;
+	\item \textbf{campo informativo}: la lunghezza è limitata tra 0 e 1500 ottetti ma può essere ampliata facendo uso del campo supplementare \textbf{padding}.
+\end{itemize}
+Inoltre, il PPP prevede un secondo campo che non compare in HDLC: 
+\begin{itemize}
+	\item \textbf{protocol}: fatto di 1 o 2 \textit{byte}, serve ad identificare il protocollo incapsulato nel frame.
+\end{itemize}
+
+Per le operazioni del \textit{Livello di collegamento} il PPP si avvale del protocollo \textbf{LCP}\textit{ (Link Control Protocol)}, mentre per le negoziazioni con il \textit{Livello di rete} impiega protocolli del tipo \textbf{NCP}\textit{ (Network Control Protocol)}.
+\newpage
+%--------------------------------------------------------
+
+\section{Livello Rete}
+\subsection{IP}
+L'IP definisce l'esatto formato dei dati mentre attraversano l'internet TCP/IP. Svolge la funzione di \textbf{routing} e definisce regole.\\
+ L'unità fondamentale è il \textbf{datagram IP}, diviso in \textit{header} (intestazione) e \textit{data} (blocco dati).
+ Nell'\textbf{header} sono presenti i seguenti campi:
+ \begin{itemize}
+ \item\textbf{VERS}: 4 bit, indica la versione dell'IP del datagram (IPv4 o IPv6)
+ \item\textbf{HLEN}: 4 bit, indica la lunghezza dell'header in parole da 32 bit
+ \item\textbf{Lunghezza totale}: 16 bit, indica la lunghezza totale del datagram in ottetti (incluso il blocco data). max=2 alla 16.
+ \item\textbf{Servizio}: 8 bit, indica come deve essere gestito il datagram. E' diviso in 5 sottocampi:
+ \begin{itemize}
+ \item 3 bit di \textbf{precedenza}, per specificare l'importanza del datagram (0-7)
+ \item3 bit suddivisi in D, T, R per specificare il tipo di trasporto. D chiede un basso ritardo, T un alto throughput, R alta affidabilità
+ \end{itemize}
+ \item\textbf{ID, FLAG, OFFSET}:controllano la frammentazione e il riassemblaggio del datagram a seguito dell'incapsulamento degli stessi in frame al liv. fisico.
+ \item\textbf{TTL}: Time To Live, durata (s) concessa al datagram di restare in trasporto.
+ \item\textbf{PROTOCOL}: indica quale protocollo di più alto livello ha generato la porzione Data
+ \item\textbf{CHECKSUM}: garantisce l'integrità dell'header mediante CRC sii bit dell'header
+ \item\textbf{SOURCE}: indirizzo IP a 32 bit dell'host che ha generato il datagram
+ \item\textbf{DESTINATION}: indirizzo IP a 32 bit dell'host al quale è destinato il datagram
+ \item\textbf{DATI}: dati trasportati dal datagram
+ \item\textbf{OPTIONS} debugging
+ \item\textbf{RIEMPIMENTO} area riempita dibit = 0 per garantire lunghezza multipla di 32 bit.
+ \end{itemize}\newpage
+\subsubsection{IPv4}
+Un IP su 32 bit (4 byte) identifica univocamente una rete ed un host appartenente alla rete \code{x.y.z.w};\\
+L'indirizzo è diviso in due parti: \textbf{host} e \textbf{rete}.\\
+Esistono 5 classi di IP:
+\begin{itemize}
+\item\textbf{Classe A}: 0xxxxxxxx.y.z.w,\\ subnet mask: 255.0.0.0 (parte rete=x, host=y.z.w)
+\item\textbf{Classe B}: 10xxxxxxx.y.z.w,\\ subnet mask: 255.255.0.0 (parte rete=x.y, host=z.w)
+\item\textbf{Classe C}: 110xxxxxx.y.z.w,\\ subnet mask: 255.255.255.0 (parte rete=x.y.z, host=w)
+\item\textbf{Classe D}: 1110xxxxx.y.z.w (multicast)
+\item\textbf{Classe E}: 11110xxxx.y.z.w (riservata).
+\end{itemize} 
+NB: L'indirizzo IP indica la \textit{connessione di un host alla rete}, non l'host in sè. INfatti esso è \textbf{assegnato alle interfacce di rete}, non agli host!
+\subsubsection{Indirizzi speciali}
+Gli IP possono far riferimento a \textit{reti} o \textit{host}. 
+\begin{itemize}
+\item \textbf{indirizzo di rete}: IP in cui i bit della parte \textit{host} sono tutti a 0, denota la rete stessa;
+\item \textbf{indirizzo di broadcast}: Se tutti i bit della parte \textit{host} sono a 1, riservato a tutti gli host della rete;
+\item \textbf{default route}: 0.0.0.0
+\item \textbf{loopback address}: 127.0.0.1
+\item\textbf{Broadcast locale}: 255.255.255.255
+\end{itemize}
+\subsubsection{Interfaccia di rete}
+Ad ogni \textit{scheda di rete (hardware)} di un dispositivo corrisponde un'\textit{Interfaccia di Rete (software)} sulla quale operano protocolli di rete come Ethernet. \footnote{Esistono anche interfacce virtuali come quella di loopback locale presente in ogni computer (\code{lo} su Unix)}\\
+Quando un'interfaccia di rete viene configurata ad essa viene assegnato un indirizzo IP, ciò avviene automaticamente attraverso il protocollo \textit{DHCP} o può essere effettuato manualmente.
+\\Nei sistemi Unix-Linux, il comando per la configurazione manuale dell'IP è \code{ifconfig} (dove "if" sta per "interface"). La sintassi è la seguente:
+\\ \code{\$ ifconfig <nome interfaccia> <indirizzo IP> netmask <netmask\\ x.y.z.q> broadcast <indirizzo broadcast>} \footnote{Il comando \code{ifconfig} senza argomenti mostra lo stato delle interfacce.} %forse meglio un esempio?
+Più di recente, \code{ifconfig}, \code{route} (vedi \textit{Routing}) ed \code{arp} sono stati rimpiazzati dal comando \code{ip}, preinstallato nei sistemi arch.
+\newpage
+\subsection{Routing}
+Il routing consiste nella scelta del cammino migliore da percorrere per trasmettere un datagram da un host all'altro, passando attraverso i nodi di una rete basata sul protocollo IP. Si divide in:
+\begin{itemize}
+\item \textbf{Routing Minimale}: la tabella di routing viene definita al momento della configurazione dell'Interfaccia di rete;
+\item \textbf{Routing Statico}: utilizzato quasi solamente per gli host, prevede la definizione manuale delle varie \italic{route}. In Unix-Linux le route possono essere aggiunte usando il comando \\
+\code{\$ route add -net <ind. di rete> netmask <netmask x.y.z.q> gw <ind. gateway> }\\
+Per rendere permanenti le modifiche, i comandi \code{route} devono essere salvati in un file di configurazione eseguito all'avvio della macchina (in sistemi Unix-Linux, il path di tale file è \code{/etc/init.d/rc.local}); 
+\item \textbf{Routing Dinamico}: utilizzato nei router, sfrutta i diversi \textbf{Protocolli di routing}.
+\end{itemize}
+Alla ricezione di un pacchetto, ogni nodo delle rete esegue le seguenti operazioni:
+\begin{itemize}
+\item[-] determina la classe dell’Indirizzo IP di destinazione del pacchetto;
+\item[-] controlla se tale indirizzo è locale ed eventualmente vi applica la Netmask per poi inviarlo direttamente all'host destinatario;
+\item[-] se l'indirizzo non è locale, cerca la rete di destinazione nella Tabella di routing e, se presente, instrada il datagram verso il Gateway corrispondente.
+\end{itemize}
+
+\subsubsection{Tabella di routing}
+Presente in ogni nodo di rete, contiene le informazioni per il routing.\\
+Nella tabella di routing ogni riga rappresenta una "strada", composta da:
+\begin{itemize}
+\item indirizzo dell'host o sottorete di destinazione;
+\item indirizzo del prossimo gateway da attraversare;
+\item "distanza" dalla destinazione, detta \textbf{Metric}.
+\end{itemize}
+Nei sistemi Unix-Linux, si visualizza tramite il comando \code{netstat -r}\footnote{Attenzione: il campo \code{Genmask} indica la netmask.} o \code{route}.
+\\'E possibile utilizzare la specifica \code{-n} per ottenere gli indirizzi di destinazione in forma numerica.
+Il significato delle \italic{flag} è il seguente:
+\begin{itemize}
+\item U (Up) indica che l'Interfaccia di rete è attiva;
+\item G indica un'uscita verso un'altra rete tramite Gateway;
+\item H indica che la destinazione è l'indirizzo completo di un host;
+\item D indica una route aggiunta da un ICMP redirect.
+\end{itemize} 
+
+\subsubsection{Algoritmi di routing}
+Devono essere: ottimali, semplici e con basso overhead, robusti e stabili, rapidi nella convergenza, flessibili.\\
+Classificati in: statici/dinamici, single/multi-path, piatti/gerarchici, Host/Router-intelligent, Intra/inter-domain, \textbf{Distance-vector}\footnote{\textit{Periodicamente} i router raggiungibili si scambiano le istruzioni di routing; \textit{il ricevente sostituisce le proprie istruzioni se quelle ricevute sono più ottimali}, le quali verranno propagata.}/\textbf{Link-state}\footnote{Informazioni inviate in \textit{broadcast}. Routers= nodi di un grafo connesso}.
+
+ \subsection{Protocolli di Address Resolution}
+ Quando un pacchetto di livello 3 (Network) deve essere incapsulato in un protocollo di livello 2 (Data Link), questo deve inserire nell'header del pacchetto \textit{l'indirizzo Data Link}. \\Quindi per comunicare si deve conoscere l\textbf{'indirizzo fisico} dell'host di destinazione se questo appartiene\textit{ alla stessa rete del mittente}; O l'\textbf{indirizzo del Gateway} se l'host destinazione \textit{appartiene ad un'altra rete}.
+ \subsubsection{ARP}
+\textit{ Address Resolution Protocoll}: associa (risolve) la corrispondenza indirizzo ip (generalmente conosciuto) - indirizzo fisico di un host. \\
+L'host A che vuole conoscere l'indirizzo fisico di B, invia un pacchetto broadcast contenente l'IP dell'host B, il quale rissponderà fornendo il suo indirizzo fisico. \\
+In ogni macchina è presente una \textbf{cache} che salva gli indirizzi risolti via ARP per consultazioni successive (cache=\textit{soft state - indirizzi possono diventare vecchi == timer di scadenza)}\\
+L'host che effettua richiesta ARP via broadcast include il proprio indirizzo fisico, cosicchè tutti gli host possono aggiornare la propria cache.
+ \subsubsection{RARP}
+\textit{ Reverse Address Resolution Protocol}: l'host spedisce la richiesta RARP ad un server mediante pacchetto broadcast con specificato indirizzo fisico, ed attende una risposta (che includerà l'IP relativo a quell'indirizzo fisico trasmesso mediante richiesta RARP).\\
+Usato per workstation diskless (devono caricare il S.O. da un server ad ogni avvio).
+\subsubsection{Autonomous System}
+Le reti e gli IS (Intermediate System) si suddividono in \textbf{interni} ad un dominio di routing ed \textbf{esterni} ad un dominio di routing \footnote{insieme delle reti soggette all'amministrazione di una stessa organizzazione}. Il dominio di routing prende il nome di \textbf{AS} (Autonomous System), identificando la politica di routing adottata.\\
+GLi AS si dividono in : \textbf{Multihomed AS} (mantiene connessioni con più di un AS), \textbf{Stub AS} ( connesso solamente con un altro AS) e \textbf{Transit AS} (fornisce attraverso di sè connessioni con altre reti).\\
+I \textit{router} che instradano messaggi all'interno dello stesso AS sono \textbf{Interior Router}, quelli che instradano anche tra AS diversi sono \textbf{Exterior Router}.\\
+I primi eseguono una famiglia di protocolli detta \textbf{IGP} (Interior Gateway Protocol), i secondi \textbf{EGP} (Exterior Gateway Protocol).
+\newpage
+
+\subsection{Protocolli di Routing IGP} 
+\subsubsection{OSPF}
+Open Shortes Path First, protocollo standard per routing all'interno di un AS, è open source e basato sull'omonimo algoritmo di Dijkstra.\\
+E' un \textbf{link-state routing protocol}, in quanto invia \textit{link-state advertisements} (LSA) a \textbf{tutti} i routers di una stessa \textbf{area gerarchica}. Un router OSPF accumula LSA e calcola lo Shortest Path.\\
+Quindi il routing può essere Inter-Area o Intra-Area. Il responsabile del routing Inter-Area è l'\textit{OSPF Backbone}, che può essere anche spezzato e ricollegato tramite \textit{virtual-links} (questo per definire topologie logiche diverse da quelle fisiche).
+OSPF distingue 4 tipi di router:
+\begin{itemize}
+\item\textbf{Internal Router}: interni ad un'area
+\item\textbf{Are Border Router}: che connettono 2 o più aree
+\item\textbf{Backbone Router}: appartenenti alla dorsale (area 0)
+\item\textbf{Border AS Router}: router di confine tra AS
+\end{itemize}
+OSP si basa sull'invio di pacchetti (router non adiacenti non scambiano informazioni):
+\begin{itemize}
+\item\textbf{Hello}: usato per scoprire i neighbors all'avvio del router, il designed router (DR) ed il backup designed router (BDR)
+\item\textbf{LS Update}: fornisce i propri criteri per la selezione del costo del link
+\item\textbf{LS ACK}: conferma un LS update
+\item\textbf{Database Description}: comunica gli aggiornamenti che conosce
+\item\textbf{LS Request}: richiesta di info di stato ai neighboars routers
+\end{itemize}
+\textbf{OSPF Packet format}\\Header (24 Bytes): version number (1), Type (1), Length (2), Router ID(4), Area ID (4) Checksum (2), Autentication Type (2), Autentication (8); \\Data (Variable).
+                                                                                                                     \newpage
+\subsubsection{RIP}
+Routing Information Protocol, implementato nel programma \textit{routed}, si basa sull'algoritmo di Bellman-Ford (vettore-distanza), quindi è un \textbf{Distance-vector routing protocol}.
+Ha un limite di \textit{15 hops}: reti più distanti sono irraggiungibili.\\
+Un router RIP invia \textit{tutta la routing table} o una porzione di essa ai \textit{router vicini} (neighbors distanti 1 hop) ad intervalli di tempo.\\
+Abbiamo due forme di RIP:
+\begin{itemize}
+\item\textbf{Attiva}: usata dai \textit{routers}, invia in \textit{broadcast} aggiornamenti periodici di routing ed usa i msg in arrivo per aggiornare la propria routing table.
+\item\textbf{Passiva}: usata dagli \textit{hosts} (ma anche dai routers\footnote{Quindi i roter possono essere attivi o passivi, gli host passivi}, usa i msg in arrivo per aggiornare la routing table, ma non invia aggiornamenti\footnote{sono del tipo (indirizzo destinazione, distanza)}.
+\end{itemize}                                                                                                               RIP è più propenso a generare \textit{loops} rispetto a OSPF, ma ha bisogno di \textit{meno risorse}, è più semplice da implementare ed è disponibile di default su Unix/Linux (\textbf{routed})\\
+RIP deve gestire 3 problemi:
+\begin{itemize}
+\item non rileva loop
+\item instabilità (risolto usando un numero basso di distanza max)
+\item problemi di convergenza lenta. Risolto adottando tecniche di: \begin{itemize}
+\item\textit{split horizon update} (un router non propaga info su un'altro che ha ricebuto questo msg)
+\item\textit{hold down} (il router ignora aggiornamenti inerenti a una rete dopo che ha ricevuto un msg di rete irraggiungibile), \item\textit{poison reverse} (se scompare un collegamento, questo gli verrà assegnato distanza infinita) + \textit{triggered update} (i routers aggiornano la scomparsa immediatamente)
+\end{itemize}
+\end{itemize}
+\textbf{RIP1 Packet format}: Command (1), Version number (1), Zero (2), Address Family ID (2), Zero (2), Address (4), Zero (4), Zero (4), Metric (4)\\
+\textbf{RIP2 Packet format}: Command (1), Version number (1), Unused (1), Address Format ID (2), Route Tag (2), IP address (4), Subnet Mask (4), Next Hop (4), Metric (4)
+\newpage
+\subsection{Protocolli di routing EGP}
+\subsubsection{BGP}
+Border Gateway Protocol, protocollo di inter-domain routing che mette in comunicazione routers appartenenti ad AS differenti (\textit{gateway di confine}).\\
+BGP effettua 
+\begin{itemize}
+\item\textbf{inter AS routing} tra due o più router BGC appartenenti ad AS diversi. 
+\item\textbf{intra AS routing} tra due o più router iBGP appartenenti allo stesso AS
+\item\textbf{pass-through AS routing} tra due o più router BGP che scambiano attraverso un AS che non esegue BGP, il cui traffico non è destinato a nessun nodo interno a quell'AS.
+\end{itemize}
+Due router BGC formano una connessione TCP \textit{(peer o neighbor routers)} e si scambiano prima di tutto le routing tables e per ogni rete il prossimo hop, dopodichè si scambiano \textit{messaggi di gestione della connessione (nel campo Type)} (Open, Update, Notification, Keepalive, Refresh).\\
+\textbf{BGP Packet format}: Marker\footnote{valore riconosciuto da entrambi i peers per contrassegnare l'inizio del msg.}(16), Length (2), Type (1), Data (variable).                                                                                                                  
+                                                                                                                  
+\subsection{ICMP}
+\textit{Internet Control Message Protocol}, protocollo progettato per riportare anomalie durante il routing dei pacchetti e per verificare lo stato della rete. I vari tipi di messaggi ICMP sono:
+\begin{itemize}
+\item[\textbf{codice}] \textbf{Messaggio}
+\item[0] Echo Reply \textit{(verifica raggiungibilità nodo)}
+\item[3] Destination Unreachable \textit{(segnalazione anomalia)}
+\item[5] Redirect \textit{(associa un router diverso da quello di default per un migliore instradamento)}
+\item[8] Echo Request \textit{(verifica raggiungibilità nodo)}
+\item[11] Time Exceeded for a Datagram \textit{(segnalazione anomalia)}
+\item[17] Address Mask Request \textit{(Richiedi quale netmask è usata in una rete)}
+\item[18] Address Mask Reply \textit{(Invia all'interfaccia che l'ha richiesta, la propria netmask)}
+\end{itemize} \newpage
+\subsection{Dispositivi di rete}
+Nel secondo livello OSI troviamo dispositivi di rete plug-and-play ed \textit{"intelligenti"}, che non si limitano alla sola replicazione del segnale ma sono in grado di riconoscere, nei segnali elettrici che ricevono dal mezzo trasmissivo, i dati organizzati in \textbf{frame}; Agiscono quindi sui frame ricevuti, gestendoli ed instradandoli, il tutto in modo trasparente.
+\subsubsection{Bridge} Un bridge \textit{(ponte)} è un dispositivo di rete munito di porte con cui è collegato a diversi \textbf{\textit{segmenti di rete}} (generalmente due o più LAN) da cui riceve dati e li instrada selettivamente verso una porta destinataria
+\paragraph{Funzionamento} Quando riceve un pacchetto su una porta, riconosce i frame, estrae gli indirizzi sorgente e destinazione e cerca di capire dall'indirizzo del \textit{destinatario} se questi si trova nello \textbf{stesso segmento} del \textit{mittente} oppure no \textbf{\textit{(Filtering)}}. Nel primo caso non inoltra il frame (il destinatario condivide lo stesso bus). \\Nel secondo caso il bridge inoltra il frame verso il \textit{segmento del destinatario} \textbf{\textit{(Forwarding)}}; Se non sa dove si trova, il bridge inoltra il frame su tutte le porte \textbf{\textit{(Flooding)}}. \\Per instradare i frames, il bridge mantiene una tabella (di \textbf{forwarding}) di indirizzi MAC per ogni porta, così è in grado di capire verso quale porta, e quindi quale segmento, inoltrare il frame. 
+\para{Tipologie} In base alle tipologie delle due reti si distinguono:
+\begin{itemize}
+\item \textbf{Transparent Bridge}: collega 2 LAN Ethernet o IEEE 802.3
+\item \textbf{Source Routing Bridge}: collega 2 LAN Token Ring
+\item \textbf{Translational Bridge}: collega 2 LAN di tipo diverso (deve adattarsi alle diverse regole trasmissive)
+\end{itemize}
+\subsubsection{Switch} Uno switch \textit{(commutatore)} è un dispositivo molto simile al bridge, ma a differenza di quest'ultimo è collegato direttamente agli host ed ha un numero di porte nettamente superiore.
+\paragraph{Funzionamento} La funzione di instradamento è implementata mantenendo in un buffer locale tutti gli indirizzi \textit{MAC} degli host connessi alla rete, suddivisi per \textit{porta dello switch}.\\
+L'instradamento è analogo a quello del bridge, ma nel caso in cui lo switch invii il pacchetto a tutte le porte (flooding), il nodo destinatario, ricevuto il pacchetto, risponderà facendo sapere allo switch la sua porta ed il suo MAC address.\\
+Infine, usando lo switch, non sono possibili collisioni ed è possibile usare la modalità \textit{Full-Duplex}.
+
+\newpage
+%-------------------------------------------------------------
+
+\section{Livello Applicazione}
+\subsection{DNS e Gestione dei nomi}
+Il DNS (\textit{Domain Name System}) è un servizio utilizzato per associare i nomi degli host, più semplici da ricordare per l'utente, ai relativi indirizzi  \textit{IP}.
+\paragraph{Spazio dei nomi gerarchico} basato su un insieme di database distribuiti, garantisce l'aggiornamento di tutta la rete. L'insieme dei nomi viene suddiviso in zone dette domini che possono coprire più host ed essere suddivise in sotto-domini e così via, formando una struttura ad albero in cui i nodi rappresentano i nomi:
+\begin{itemize}
+\item I domini di primo livello o \textbf{TLD} (\textit{Top Level Domain}) sono i figli del nodo radice ".", suddivisi in: 
+\begin{itemize}
+\item \textbf{gTLD} (\textit{generic TLD}), ad esempio .com, .edu...
+\item \textbf{ccTLD} (\textit{country-code TLD}) ad esempio .it, .fr, .uk...),
+\item \textbf{infrastrutturali}: .arpa, usato per la risoluzione inversa dei nomi. 
+\end{itemize}
+\item I domini di secondo livello, in genere, appartengono alle organizzazioni che li hanno registrati e comprendono il loro e il dominio precedente separati da un punto (es. unipg.it).
+\item I successivi \textit{sotto-domini} vengono creati per rendere la gestione del DNS modulare e seguono la stessa logica dei domini di secondo livello.
+\item Infine le foglie corrispondono agli host. 
+\end{itemize}
+Quindi, al contrario degli indirizzi IP, in un nome DNS la parte più importante è la prima partendo da destra (appunto, il TLD).
+Ad ogni dominio è associato un resource record (RR), file ASCII che contengono records del database DNS.  %\vedi resource record
+\paragraph{Server DNS} per rendere disponibile lo spazio dei nomi e rispondere alle richieste del resolver risolvendo i nomi (name server)
+\paragraph{Client DNS} una libreria di funzioni per generare e inviare le richieste sui nomi, interrogando i server DNS (resolver)
+\paragraph{Risoluzione}
+La conversione di un nome in un indirizzo è detta \textit{risoluzione}, mentre la conversione di un indirizzo in nome è detta \textit{risoluzione inversa}.\\
+La risoluzione può essere \textbf{statica} (mapping stabilito permanentemente tramite una host table) o \textbf{dinamica} (mapping stabilito ad ogni avvio dell'host).\\
+Per eseguire la risoluzione il client chiama il risolutore, passandone come parametro il nome. \\Questo invia un pacchetto \textit{UDP} a un server DNS locale (\textit{primary server}) che cerca il nome e se è presente nella sua cache lo restituisce; in caso contrario interroga ricorsivamente i server partendo da un root server del TLD fino ad arrivare ai server autorevoli del nome richiesto (\textit{authoritative server}), i quali invieranno la loro risposta al client.
+
+\paragraph{BIND} \textit{Berkeley Internet Name Domain} è l'implementazione più comune del DNS su ambiente Unix. BIND è composto da una parte client, il \code{resolver}, ed una parte server, \code{named}. La prima è una libreria volta a generare ed inviare le richieste al server; la seconda un demone che risponde alle richieste del resolver. Sia lato server che lato client, la configurazione avviene tramite specifici file di testo.\\
+BIND può essere configurato come 
+\begin{itemize}
+\item \italic{\textbf{caching-only}} reindirizza ogni richiesta del resolver ad altri server e memorizza il risultato che ritornano in una cache locale
+\item \textbf{authoritative} contiene info su tutta la zona di sua competenza. Può essere 
+\begin{itemize}
+\item \italic{\textbf{secondary}}: scaricano gli \textbf{Zone files} dal \italic{primary server} e li memorizzano in appositi file detti \italic{zone file transfer};
+\item \italic{\textbf{primary}}: gestiscono le informazioni relative a specifici domini, salvate negli \textit{Zone files}, confgurati dall'amministratore di rete.
+\end{itemize}
+\end{itemize}
+Di seguito, le \textbf{Configurazioni} del \textbf{Resolver}, del \textbf{Named} e degli \textbf{Zone files} di BIND:
+\paragraph{Resolver} \textbf{(/etc/resolv.conf)}: contiene istruzioni per l'esecuzione delle richieste; Si può usare la configurazione di default, altrimenti è necessario specificare:
+\begin{itemize}
+\item \textbf{nameserver \textless IP-address\textgreater}: le richieste saranno inviate all'IP \textit{IP-address}. Si possono specificare al massimo 3 nameserver, nel caso il primo non risponda.
+\item \textbf{domain \textless name\textgreater}: nome del dominio di default che verrà concatenato a sinistra di ogni nome host che non contiene il carattere punto (in caso di fallimento omette i domini meno significativi fino a concatenare solo il TLD).
+\item \textbf{search \textless domain-1, ..., domain-n\textgreater}: come domain ma con la possibilità di avere più domini da provare ad aggiungere al nome host (ma non risale i domini se fallisce).
+\end{itemize}
+
+\paragraph{Named} (Server): è necessario configurare più files: 
+\begin{itemize}
+\item \textbf{/etc/named.conf}: parametri generali di configurazione e puntatori ai file dei domini gestiti dal server (ossia gli zone files)
+\begin{itemize}
+\item caching-only: si omettono i comandi di configurazione del primary e secondary server tranne il dominio di loopback.
+\code{primary \quad 0.0.127.IN-ADDR.ARPA \quad /etc/named.local \\ 
+cache \qquad . \qquad \qquad \qquad \qquad \qquad /etc/named.ca}//
+\item primary server: supponendo che il dominio sia \textit{unipg.it} e il primary server \textit{moe}
+\code{\begin{tabbing}
+\hspace*{8cm} \= \kill
+directory \>/etc\\
+\hspace*{3cm} \= \hspace*{5cm} \= \kill
+primary \> unipg.it \> named.hosts\\ 
+primary \> 250.141.IN-ADDR.ARPA \> named.rev\\ 
+primary \> 0.0.127.IN-ADDR.ARPA \> named.local\\
+cache \> . \> named.ca
+\end{tabbing}
+}
+\textit{2. il server locale è il primary server per [unipg.it] con zonefile [named.host]}\\
+\textit{3. puntatore a [named.rev]. Il server locale è il primary server per il reverse domain [205.141.IN-ADDR.ARPA]}\\
+\item secondary server: supponendo che il dominio sia \textit{unipg.it} e il primary server \textit{moe}
+\code{\begin{tabbing}
+\hspace*{10cm} \= \kill
+directory \>/etc\\
+\hspace*{2,5cm} \= \hspace*{4,5cm} \= \hspace*{3cm} \=\kill
+secondary \> unipg.it \>141.250.1.1 \> unipg.it.hosts\\ 
+secondary \> 250.141.IN-ADDR.ARPA \> 141.250.1.1 \> 250.141.rev\\ 
+primary \> 0.0.127.IN-ADDR.ARPA \>  \>named.local\\
+cache \> . \>  \qquad  \qquad \qquad \qquad named.ca
+\end{tabbing}
+}
+\textit{2. server locale scarica info su  [unipg.it] dal server con IP [141.250.1.1] e memorizza nel file [unipg.it.hosts]}\\
+\textit{3. il server locale è il secondary server per il reverse domain [250.141.IN-ADDR.ARPA]. I suoi dati vanno scaricati dal server con IP [141.250.1.1] e memorizzati nel file [/etc/250.141.rev]}
+\end{itemize}
+\item \textbf{/etc/named.ca}: puntatori ai root domain server. Stabilisce il nome dei root server e i loro indirizzi.
+\code{
+;\\
+; formerly NS1.ISI.EDU\\
+.  \qquad \qquad \qquad \qquad \qquad \quad 3600000  \qquad \qquad  NS  \qquad \qquad B.ROOT-SERVERS.NET.\\
+B.ROOT-SERVERS.NET. \qquad 3600000  \qquad \qquad A  \qquad \qquad 128.9.0.107\\
+...
+}
+\item \textbf{/etc/named.local}: zone file per la traduzione del reverse domain 0.0.127.IN-ADDR.ARPA (lookback). Permette quindi la conversione di 127.0.0.1 nel nome "localhost".
+\code{\begin{tabbing}
+\hspace*{1cm} \= \hspace*{1cm} \= \hspace*{2cm} \= \hspace*{2cm} \=  \kill
+\$TTL \> 86400 \>\>\>\\
+@ \> IN \> SOA \> localhost. \> root.localhost. (\\
+\> \> \> 2014030101 \> ; Serial\\
+\> \> \> 10800 \> ; Refresh after 3 hours\\
+\> \> \> 3600 \> ; Retry after 1 hour\\
+\> \> \>  604800 \> ; Expire after 1 week\\
+\> \> \> 86400 ) \> ; Minimum TTL of 1 day\\
+\> IN \> NS \> localhost.\> \\
+1 \> IN \> PTR \> localhost.\\
+\end{tabbing}}
+\italic{Dove ad @ verrà sostituito il nome del dominio corrispondente a questo file, e 1 rappresenta l'ultimo numero dell'IP 127.0.0.1 (i primi tre sono in 0.0.127.IN-ADDR.ARPA)}\newpage
+\item \textbf{/etc/named.hosts}: zone file per la risoluzione diretta\\
+\code{
+@ IN SOA moe.unipg.it. root.moe.unipg.it. (
+\begin{tabbing}
+\hspace*{6cm} \= \hspace*{3cm} \= \kill
+\>2014030101 \>; Serial\\
+\>10800 \>; Refresh\\
+\>3600 \>; Retry\\
+\>604800 \>; Expire\\
+\>86400 ) \>; Minimum\\
+\hspace*{0,5cm} \= \hspace*{5cm} \= \kill
+ \italic{//Name servers}\>\>\\
+\>\> IN NS moe.unipg.it.\\
+ \>plant\> IN NS pack.plant.unipg.it.\\
+ \italic{//Mail server}\>\>\\
+ \>\>IN MX 10 moe.unipg.it.\\
+ \>\>IN MX 20 larry.unipg.it.\\
+\>localhost\> IN A 127.0.0.1\\
+ \italic{//Name to IP mapping}\>\>\\
+\>moe.unipg.it.\> IN A 141.250.1.1\\
+\>larry.unipg.it. \>IN A 141.250.1.2\\
+\>omniw.unipg.it. \>IN A 141.250.1.40\\
+ \italic{//Alias}\>\>\\
+\>www \>IN CNAME moe.unipg.it.\\
+//interface specific name\>\>\\
+\>ns133.unipg.it. \>IN A 141.250.5.51\\
+\end{tabbing}}
+\item \textbf{/etc/named.rev}: zone file per la risoluzione inversa\\
+\code{
+@ IN SOA moe.unipg.it. root.moe.unipg.it. (
+\begin{tabbing}
+\hspace*{6cm} \= \hspace*{3cm} \= \kill
+\>2014030101 \>; Serial\\
+\>10800 \>; Refresh\\
+\>3600 \>; Retry\\
+\>604800 \>; Expire\\
+\>86400 ) \>; Minimum\\
+\hspace*{0,5cm} \= \hspace*{5cm} \= \kill
+\italic{//Name server}\\
+\>250.141.in-addr.arpa.\> IN NS moe.unipg.it.\\
+\>250.141.in-addr.arpa.\> IN NS larry.unipg.it.\\
+//Address point to canonical names\\
+\>1.1.250.141.in-addr.arpa.\> IN PTR moe.unipg.it.\\
+\>2.1.250.141.in-addr.arpa. \>IN PTR larry.unipg.it\\
+\end{tabbing}}
+\end{itemize}
+\newpage
+\para{Zone files}File di testo che descrivono un sottoinsieme di domini (spesso un singolo dominio), ogni riga viene detta \italic{Resource Record} (RR) ed è della forma:\\
+\[ [name | ttl | recordclass | record type | record data ]\]\\
+con:
+\begin{itemize}
+\item \textbf{name}: nome di dominio (in genere si usa @ per riferirlo al dominio definito nello zone file)
+\item \textbf{ttl (time to live)}: tempo di permanenza del RR nella cache di un sistema remoto
+\item \textbf{record class}: sempre \code{IN}, indica che il record è un INternet DNS RR
+\item \textbf{record type}: il tipo di RR (v. standard resource record)
+\item \textbf{record data}: info specifiche del tipo di RR
+\end{itemize}
+I principali componenti di uno zone file sono chiamati "standard resource record" e sono:
+\begin{itemize}
+\item \textbf{SOA} (Start of authority): segna l'inizio di un zone file (in genere è il primo record usato e ne esiste uno per zone file), definendo parametri specifici per questo zone file [data]
+\item \textbf{NS} (Name Server): nome del server \italic{[record data]} che ha autorità su questo dominio \italic{[name]}
+\item \textbf{A} (Address record): associa l'hostname \italic{[name]} ad un indirizzo IP \italic{[record data]}
+\item \textbf{PTR} (domain name PoinTR): associa gli indirizzi IP \italic{[name]} ad un nome di host \italic{[record data]}
+\item \textbf{MX} (Mail eXchanger): definisce il server \italic{[record data]} che gestisce la posta per un host o un dominio \italic{[name]}
+\item \textbf{CNAME} (Canonical NAME): definisce un alias per il nome di un host
+\end{itemize}
+\paragraph{Comandi:} Per avviare il servizio DNS si usa\\ \code{named [\begin{tabbing}
+\hspace*{1cm} \= \hspace*{2,5cm} \= \kill
+\> -c configfile \> \textit{//path di named.conf (default: /etc/named.conf)}\\
+\> -d level \> \textit{//attiva il debug, salvando i log in \$dir/named.run}\\
+\> -p port \> \textit{//porta a cui deve rispondere il servizio (default: 53)}\\
+\> -n ncpus \> \textit{//per sfruttare i sistemi multiprocessore}\\
+\> -t directory \> \textit{//cambio di directory dopo aver letto named.conf}\\
+\> -u user \> \textit{//utente che esegue named}\\] \end{tabbing}}
+Per avviare un tool di debugging (\textbf{dig}) si usa\\
+\code{dig @server hostname}\\
+e permette di interrogare un nameserver per ottenere informazioni  e verificarne la configurazione.
+\newpage
+
+\subsection{Accesso risorse in rete}
+\subsubsection{Telnet}
+Servizio di emulazione di un terminale a carattere ASCII attraverso la rete (basato su TCP). Effettua l'astrazione del terminale consentendo l'accesso remoto attraverso la rete.\\
+\textbf{Client}: invocato dall'utente, realizza la connessione col \textit{server remoto} e passa i caratteri digitali alla tastiera dall'utente al server, visualizzando l'output nel server.\\
+\textbf{Server}: accetta connessioni di rete, passa i caratteri digitati dall'utente al S.O., come se fossero digitati da taastiera locale. Invia l'output al client.\\
+Basato su 3 aspetti:
+\begin{itemize}
+\item\textbf{NTV}: Network Virtual Terminal, terminale virtuale; ogni client e server traduce i comandi nativi in quelli del NTV
+\item\textbf{Opzioni negoziate}: tra client e server aumenta funzionalità di telnet
+\item\textbf{Viste simmetriche}: fanno si che ai lati della comunicazione ci siano programmi invece di una tastiera e un monitor.
+\end{itemize}
+Attualmente sostituito con \textbf{SSH} (Secure SHell)
+\subsubsection{Comandi r}
+Progettati per i sistemi BSD Unix e anch'essi basati sul \textit{TCP}, i comandi r hanno funzionalità analoghe a quelle di \textit{Telnet}:
+\begin{itemize}
+\item \code{rlogin} (\textit{remote login}) permette di amministrare una serie di macchine autenticandosi una sola volta (\textit{one time login}); 
+\item \code{rsh} (\textit{remote shell}) consente di eseguire da remoto singoli comandi;
+\item \code{rcp} (\textit{remote copy}) abilita alla copia di file attraverso la rete. 
+\end{itemize}
+Anche in questi casi non vi è alcuna forma di crittografia ed \textit{SSH} sopperisce a questa mancanza.
+
+\subsubsection{NIS}
+Network Information Service: inizialmente chiamato \textbf{YP} (Yellow Pages), è un servizio che permette di \textbf{definire delle risorse di amministrazione comuni ad un insieme di host}, in modo che l'utente possa utilizzare host differenti mantenendo i suoi dati principali.\\ Funziona per mezzo di un database (in formato \textbf{NIS map}) collocato nel master server, il che permette un controllo centralizzato e la condivisione automatica delle risorse. Le NIS map sono rese disponibili ai client tramite il processo \code{ypserv} e vengono aggiornate dinamicamente tramite il demone \code{ypbind}. Sia il server che i client fanno parte di uno stesso \textbf{NIS domanin}, il cui nome può essere stabilito tramite il comando \code{domainname \textit{domain}}, mentre \code{ypwhich} serve a visualizzare l'indirizzo del server. 
+
+\subsubsection{NFS}
+Network File System: permette di \textbf{condividere directory e file su rete}.\\Lato \textit{client}, l'inserimento di una directory collocata in un host remoto viene detto \textbf{mounting} ed è realizzato tramite il comando \code{mount}.\\
+Lato \textit{server}, la condivisione di una cartella con un host specifico è detta \textbf{sharing} ed è ottenuta mediante il comando \code{export}.
+NFS è modulare, suddiviso in tre parti indipendenti:
+\begin{itemize}
+\item \textbf{NFS}, implementata da: 
+\begin{itemize}
+\item \code{nsfd [nserver\footnote{Numero di processi da eseguire}]}, demone lato server  che gestisce le richieste NSF,
+\item \code{biod [nserver]} demone lato server che gestice l'I/O dei client;
+\end{itemize}
+\item \textbf{RPC} (Remote Procedure Code), implementata da:
+\begin{itemize}
+\item \code{rpc.locked} demone che gestisce i \italic{lock files} che bloccano istanze multiple di processi specifici,
+\item \code{rpc.statd} demone che controlla lo stato della rete,
+\item \code{rpc.mountd} demone lato server che risponde alle richieste di mount;
+\end{itemize}
+\item \textbf{XDR} (eXternal Data Representation), che consente la condivisione dei file a prescindere dalla codifica specifica di ognuno.
+\end{itemize} 
+\subsection{Posta elettronica}
+\subsection{Servizi di controllo e gestione delle reti}
+
+\subsubsection{Programma di trasporto} Il programma di trasporto si occupa del \textit{trasferimento dei messaggi} e del servizio di notifica all'utente.\\
+Per trasferimento s'intende il meccanismo con il quale il messaggio viene effettivamente trasmesso: il Mail User Agent trasferisce l'e-mail tramite il protocollo \textbf{SMTP} (Simple Mail Transfer Protocol). 
+\para{SMTP} Il Simple Mail Transfer Protocol  \'e adibito al trasporto di messaggi, efficiente ed affidabile, in ambienti eterogenei. \\
+Ad ogni richiesta da parte dell'utente, tramite il comando \code{HELO} viene attivato un canale di comunicazione bidirezionale sulla porta 25 tra il server SMTP trasmettitore (\textit{sender}), che invia i comandi, e quello ricevente (\textit{receiver}), che invia le risposte.\\
+Una volta creato il canale, l'SMTP-sender invia il comando \code{MAIL}\footnote{Comandi alternativi a \code{MAIL} sono \code{SEND}, \code{SOML} e \code{SAML}}, che contiene i dati riguardanti il mittente, e il receiver risponde con \code{OK}.\\
+Il sender invia poi il comando \code{RCPT}, contenente i dati del destinatario, seguito da \code{DATA}. Se il receiver non pu\'o rispondere, invia un codice di \textit{reject}.\\ Ogniqualvolta il receiver interpreta correttamente un messaggio risponde con \code{OK}. Altri comandi utilizzati durande la sessione sono \code{NOOP}, \code{HELP}, \code{EXPN} e \code{VRFY}. La sessione termina sempre con \code{QUIT}. Tale dialogo \'e bloccante. 
+%mancano esempi
+\para{Configurazione di Sendmail}
+La configurazione manuale di Sendmail (file \code{sendmail.cf}) è diventata nel tempo talmente complessa da essere sconsigliata. Essa viene semplificata tramite uno pseudolinguaggio compilato, \textbf{M4}.
+
+\subsubsection{DHCP}
+Il protocollo DHCP \textit{(Dynamic Host Configuration Protocol)} permette agli \italic{host} di una rete locale di ricevere ad ogni richiesta di accesso a una rete IP tutte le informazioni di configurazione necessarie a connettersi ed operare.
+\\Non è utilizzato per la configurazione dei router.
+\\ Il DHCP si basa sul modello \italic{client-server}:
+\begin{itemize}
+	\item \textbf{client}:  host che necessita un indirizzo IP per collegarsi alla sottorete;
+	\item \textbf{server}:  host designato all'assegnazione degli indirizzi ai client che li richiedono. Anche un \italic{router} può assolvere, tra le altre cose, tale ruolo.
+\end{itemize}
+È un protocollo nato come complemento del \textbf{BOOTP} (Bootstrap protocol), il quale sfrutta l'\textit{UDP} ed assegna gli indirizzi IP tramite messaggi \italic{broadcast}.
+\\Il DHCP lo estende aggiungendo nuove opzioni di configurazione, tra cui la scelta fra \textit{3 metodi di assegnamento degli indirizzi:}
+\begin{itemize}
+	\item \textbf{automatic allocation}: i client che si connettono ricevono dal server un indirizzo IP permanente;
+	\item \textbf{dynamic allocation}: ad ogni nuova connessione il client riceve un indirizzo IP, il quale ha un tempo di validità (\italic{lease}), al cui termine ritorna nella \italic{pool} degli indirizzi disponibili. Ciò permette di riutilizzare indirizzi non più in uso dai client;
+	\item \textbf{manual allocation}: il DHCP si limita a comunicare al client l'indirizzo scelto per lui dall'amministratore di rete.
+\end{itemize}
+Il DHCP permette di riservare indirizzi IP per specifici client tramite l'associazione al relativo \textit{Indirizzo MAC} (\textbf{DHCP Client Reservation}).
+\\Il processo di assegnamento degli indirizzi si divide in 4 fasi:
+\begin{itemize}
+	\item[1.] \textbf{Discovering}: il client chiede che gli venga assegnato un indirizzo tramite il messaggio \code{DHCPDISCOVER} inviato in \textit{broadcast};
+	\item[2.] \textbf{Offering}: i server che ricevono la richiesta rispondono (se hanno indirizzi liberi a disposizione) con il messaggio \code{DHCPOFFER}, in cui propongono un indirizzo IP e gli altri parametri di configurazione al client;
+	\item[3.] \textbf{Requesting}: una volta ricevute le offerte dei server, il client le valuta e risponde con \code{DHCPREQUEST} (sempre in broadcast) per comunicare quale server ha scelto;
+	\item[4.] \textbf{Acknowledgment}: se l'assegnamento è avvenuto con successo, il server invia al client la conferma tramite \code{DHCPACK}; in caso di errori viene invece inviato il messaggio \code{DHCPNACK} (\italic{negative acknowlegment}).
+\end{itemize}
+\para{Configurazione server DHCP}:
+\begin{itemize}
+	\item[1.] Installazione del software (dipende dal sistema operativo del server);
+	\item[2.] Configurazione della pool di indirizzi: definizione degli intervalli di indirizzi assegnabili ed eventuale \italic{tempo di lease};
+	\item[3.] Definizione delle opzioni di configurazione dei client che hanno accettato l'IP offerto
+\end{itemize}
+In reti con più segmenti si può evitare di definire un server per ogni sottorete ricorrendo ai \textbf{DHCP Relay Agent}: è sufficiente configurarne \textbf{uno per ogni segmento di rete} al fine di rilevare i pacchetti inviati in \italic{broadcast} (\code{DHCPDISCOVER} o \code{DHCPREQUEST}) ed inoltrarli ai server di destinazione, \textit{aggiungendo ad ogni pacchetto il proprio indirizzo.\\}
+\para{Problemi DHCP} Il DHCP presenta dei considerevoli problemi di sicurezza (assenza di autenticazione e di cifratura nei messaggi ).
+
+\newpage
+\section{Sicurezza delle reti}
+\para{Minacce} 
+Ogni host connesso ad una rete è sottoposto ad un gran numero di minacce, ad esempio \textbf{accessi non autorizzati} o \textbf{DoS} (\textit{Denial of Services}.\\
+Esistono diversi strategie per proteggere una rete da questi ed altri attacchi, le principali delle quali sono \textbf{Oscuramento}, \textbf{Hardening} e uso di \textbf{Firewall}.
+\subsection{Oscuramento}
+Per oscuramento si intende il garantire la sicurezza nascondendo le risorse di rete mediante strumenti come \textit{NAT}, IP Masquerading, GPG e trasmissioni crittografate.
+\subsubsection{Encryption} Limita gli accessi ai dati trasmessi, crittografando i contenuti.\\
+In ambienti Unix, si usano i comandi \code{crypt} e \code{des}.
+\subsection{Hardening} 
+Per hardening si intende la gestione della sicurezza a livello del singolo host.
+\subsubsection{TCP-wrapper} 
+I TCP-wrapper consentono di limitare l'accesso ai servizi basandosi sull'IP e l'hostname del client. \\
+Le richieste verso l'host vengono elaborate dal wrapper, che verifica che l'indirizzo del chiamante sia \textit{incluso nell'elenco }di \code{/etc/hosts.allow}: se è così, o \textit{se non è incluso }in \code{/etc/hosts.deny}, permette l'accesso.\\
+Tramite le seguenti \textbf{keyword} è possibile inoltre specificare host o gruppi di host: 
+\begin{itemize}
+\item \code{ALL} (tutti gli host);
+\item \code{LOCAL} (tutti gli host locali);
+\item \code{KNOWN} (host riconosciuti dal sistema);
+\item \code{UNKNOWN} (host non riconosciuti);
+\item \code{PARANOID} (host il cui nome non corrisponde all'indirizzo).
+\end{itemize}
+In entrambi i file è anche possibile definire delle \textbf{regole di filtraggio}, che hanno effetto dal basso verso l'alto; inoltre quelle di \code{hosts.allow} hanno la precedenza su quelle di \code{hosts.deny}.\\
+Il formato delle regole è:
+\\ \code{<elenco-servizi> : <elenco-client> [: spawn\footnote{permette di eseguire normali comandi da shell qualora una richiesta entrante soddisfi una regola.} <comando-shell>]}\\
+\subsubsection{xinetd} 
+Demone che estende le funzionalità di \code{inetd}, non si limita a gestire l'accesso ai servizi di rete, \textit{ma controlla anche i servizi stessi} al Livello delle applicazioni.\\
+Viene configurato mediante \code{/etc/xinetd.conf} ed altri file (uno per ogni servizio) posti nella directory \code{/etc/xinetd.d}, da importare nel file di configurazione generale di xinetd mediante il comando \code{includedir}. 
+
+\subsection{Firewall} Sistema hardware e/o software che costituisce un\textit{ intermediario} tra la rete locale (o singolo host) ed una o più reti esterne (tipicamente internet), \textbf{filtrando il traffico}. \\Tipicamente, un firewall è un \textit{DTE} con più schede di rete che costituisce l'unico punto di collegamento tra le reti coinvolte.\\
+Nella rete \textit{interna} ci saranno i servizi di base (come \textit{NFS}, \textit{NIS}...) rivolti agli utenti della sottorete interna; nella rete \textit{esterna} i servizi di networking (ad esempio \textit{DNS}, \textit{SMPT}, \textit{FTP} etc.), rivolti sia ad utenti interni che esterni e dunque esposti a rischi.\\
+Si distinguono due tipi di firewall:
+\begin{itemize}
+\item firewall \textbf{stateless}, che prendono decisioni basate esclusivamente sulla specifica connessione. Un esempio di questo tipo di firewall è \code{ipchains};
+\item firewall \textbf{stateful}, che tengono traccia delle connessioni e prendono dunque decisioni basate sulle varie connessioni. Un esempio è l'attuale \code{iptable}.
+\end{itemize}
+\para{Packet filtering} Metodo con il quale un firewall limita il traffico di rete.\\
+In Linux \textit{\textbf{NetFilter}} è il filtro di pacchetti  implementato nel kernel, la cui interfaccia è rappresentata dal comando \code{iptables}.\\
+\code{iptables} contiene alcune \textbf{TABLES}, che rappresentano le liste di regole di filtraggio. Queste contengono le \textbf{CHAINS} (catene in cui i pacchetti vengono controllati), che a loro volta sono formate da molte \textbf{Rules} (composte da un campo \textbf{match} e uno \textbf{target}).\\ Ogni pacchetto attraversa almeno una catena, di cui ogni regola controlla (proceduralmente) se il pacchetto soddisfa il campo \textit{match}: se così accade, gli viene applicato il \textbf{target}. I principali sono \textbf{ACCEPT} viene accettato ed instradato, \textbf{REJECT} se lo rifiuta ed avvisa il mittente con un errore o \textbf{DROP} se lo blocca e lo scarta senza notifica.\\
+Le tabelle di iptables sono:
+\begin{itemize}
+\item \textbf{filter}: regolamenta il firewalling vero e proprio, inteso come filtraggio; permette cioè di far passare i pacchetti \code{ACCEPT}, rifiutarli ed avvisarne il mittente con un messaggio di errore \code{REJECT} o scartarli senza alcuna forma di notifica \code{DROP}.
+Le catene predefinite di suddetta tabella sono:
+\begin{itemize}
+\item \code{INPUT}: vi passano i pacchetti destinati al firewall stesso,
+\item \code{OUTPUT}: vi passano i pacchetti originati dal firewall stesso, diretti altrove,
+\item \code{FORWARD}: vi passano i pacchetti che transitano nel firewall pur provenendo da altri host, diretti altrove;
+\end{itemize}
+\item \textbf{nat}: regola le attività di natting, ossia di modifica degli indirizzi IP nell'ambito dell'\textit{Oscuramento}. Consiste solitamente nel tradurre gli indirizzi di una rete privata, globalmente non univoci, in un unico indirizzo IP pubblico, in modo da consentire alla \textit{LAN} di connettersi ad \textit{Internet} e di nasconderla. Le catene predefinite di suddetta tabella sono: \label{NAT}
+\begin{itemize}
+\item \code{PREROUTING}: vi passano i pacchetti su cui non sono ancora state fatte scelte di routing,
+\item \code{POSTROUTING}: vi passano i pacchetti su cui sono già state fatte scelte di routing,
+\item \code{OUTPUT}: come in filter, vi passano i pacchetti originati dal firewall stesso, diretti altrove;
+\end{itemize}
+\code{PREROUTING} e \code{POSTROUTING} sono state introdotte per consentire di realizzare particolari comportamenti: ad esempio, se si vuole cambiare l’indirizzo di destinazione di un pacchetto sarà importante farlo prima che venga deciso da dove fare uscire il pacchetto (se così non fosse, il pacchetto uscirebbe dall’interfaccia sbagliata, mentre quando si cambia l'indirizzo del mittente di un pacchetto potrebbe essere importante farlo dopo che una decisione di routing è stata presa. I possibili target sono:
+\begin{itemize}
+\item \code{SNAT}, che consente di cambiare l’indirizzo ip sorgente di un pacchetto (\code{POSTROUTING}).
+Questa azione viene solitamente intrapresa per avere la possibilità di avere indirizzi privati già utilizzati da altre LAN senza creare conflitti o per nascondere la rete privata dall'esterno sotto un indirizzo pubblico (IP 
+Masquerading).
+\item \code{DNAT}, che consente di cambiare l’indirizzo ip destinazione di un pacchetto (\code{PREROUTING}),
+\item \code{MASQUERADE}: tipo particolare di \code{SNAT}, che fa in modo che i pacchettini abbiano come mittente l’indirizzo IP della interfaccia di rete dalla quale usciranno (\code{POSTROUTING}),
+\item \code{REDIRECT}, versione semplificata del \code{DNAT} che consente di cambiare la porta di destinazione di un pacchetto (\code{PREROUTING});
+\end{itemize}
+\item \textbf{mangle}: responsabile delle modifiche alle opzioni dei pacchetti. Ha per catene predefinite:
+\begin{itemize}
+\item \code{PREROUTING}: esamina tutti i pacchetti che entrano nel sistema (prima di sapere se sono destinati allo stesso o se devono essere inoltrati);
+\item \code{OUTPUT}: tutti i pacchetti generati dal sistema passano per questa catena.
+\end{itemize}
+\end{itemize}
+NetFilter è quindi in grado di stabilire il \textbf{contesto} del pacchetto: \textbf{NEW} (appartiene ad una nuova connessione), \textbf{ESTABLISHED} (ad una connessione esistente), \textbf{RELATED} (legato ad una connessione esistente) o \textbf{INVALID} (pacchetto sospetto, non legato ad alcuna connessione stabilita).\\
+Il packet filtering opera al \textit{Livello di rete}, per cui non si preoccupa di quali siano le applicazioni che generano il traffico. Tuttavia, non tutti i firewall operano allo stesso livello: ad esempio, un firewall che lavora anche al \textit{Livello delle applicazioni} è il \textbf{Proxy}.
+\para{Architetture di firewall} 
+Un firewall può essere configurato in diverse modalità:
+\begin{itemize}
+\item \textbf{Screening router} o \textbf{firewall router}: il firewall opera un routing filtrato sul traffico tra gli host interni e l'esterno. Sistema basilare, usato per proteggere sottoreti;
+\item \textbf{Dual-homed host}: un host con almeno due interfacce di rete divide il traffico di rete e garantisce i servizi base di rete. Sistema economico ma a \textit{single point of failure};
+\item \textbf{Screened host}: oltre al firewall router, il traffico tra la rete interna ed esterna passa attraverso un host della rete interna \textit{(bastion host)} il quale fornisce servizi di base. Lo \textit{screening-router} accetta solo pacchetti da e verso il bastion host. 
+\item \textbf{Screened sub-net}: viene creata una \textit{rete intermedia} (\textbf{DMZ} - De-Militarized Zone) usando un firewall router esterno ed uno interno; \textit{i bastion host risiedono nella DMZ}, non rappresentando più un punto critico. 
+\end{itemize}
+\subsubsection{Proxy}
+Con il termine \textbf{proxy} si indica un server collocato tra un host e un web server il quale funge da intermediario fra i due, disaccoppiando l'accesso ad internet dal browser.\\ I proxy sono largamente impiegati come \textit{Firewall} al \textit{Livello delle applicazioni}, oltre a poter essere utilizzati in catena per garantire l'anonimato in internet.
+\subsubsection{Sicurezza nel WWW}
+La capillare diffusione del \textit{WWW} lo rende forse il servizio più critico. 
+\para{Cookies} Introdotti con Netscape 2.0, i cookies sono \textit{stringhe di caratteri ASCII} che vengono passate dal web server al web browser.\\ Hanno la funzione di tenere traccia delle scelte dell'utente per meglio orientare il telemarketing. I cookies pongono problemi nell'ambito della privacy dell'utente. In risposta è nato \textit{eTrust}, un programma che definisce uno standard per la privacy online.
+\subsection{Monitoraggio} C'è la possibilità di effettuare un monitoraggio continuo sul sistema usando gli \textbf{IDS} \textit{(Intrusion Detecting Systems),} che possono essere:
+\begin{itemize}
+\item \textbf{Host-based} IDS: verifica periodicamente i log dei servizi di rete e di sistema e controlla l'integrità dei dati e dei filesystem (comandi \code{diff} ed \code{rpm -V})
+\item\textbf{ Network-based }IDS: scandisce il traffico di rete, segnalando quelli sospetti ed assegnandogli un
+\textit{livello di pericolosità} in base a dei database. 
+\end{itemize}
+In alternativa agli IDS, si possono utilizzare i comandi Unix-Linux:
+\begin{itemize}
+\item \code{ps -aux}: mostra i processi attivi;
+\item \code{who}: restituisce la lista degli utenti collegati al sistema;
+\item \code{last}: mostra il contenuto del file \code{/usr/adm/wtmp} (registro dei collegamenti al sistema);
+\item \code{ls -lR}: crea una lista con le informazioni su ogni file di sistema, la quale può essere poi confrontata con con una precedente tramite il comando \code{diff}.
+\end{itemize}
+\paragraph{Audit trail} 
+Detto anche \textit{audit log}, è costituito da uno o più registri che \textit{documentano in ordine cronologico le attività svolte entro un sistema}, utile per permettere la ricostruzione degli eventi.
+
+\end{document}
